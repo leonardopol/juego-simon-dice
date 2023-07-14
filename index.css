@@ -1,20 +1,28 @@
 #cuadro1 {
-    width: 400px;
+    width: 500px;
     height: 100px;
+    opacity: 0.5;
+    transition: opacity 500ms;
     background-color: crimson;
 }
 #cuadro2 {
-    width: 400px;
+    width: 500px;
     height: 100px;
+    opacity: 0.5;
+    transition: opacity 500ms;
     background-color: yellow;
 }
 #cuadro3 {
-    width: 400px;
+    width: 500px;
     height: 100px;
+    opacity: 0.5;
+    transition: opacity 500ms;
     background-color: blue;
 }
 #cuadro4 {
-    width: 400px;
+    width: 500px;
     height: 100px;
+    opacity: 0.5;
+    transition: opacity 500ms;
     background-color: green;
 }
