@@ -4,11 +4,12 @@ let guardarMovimientosJugador = [];
 document.querySelector("#boton-empezar").onclick = empezar;
 
 function empezar(){
-    console.log("empezo");
+    reiniciarMovimientos();
     turnoComputadora();
 }
 
 function turnoComputadora(){
+    
     console.log("turno de la computadora");
     guardarMovimientosMaquina.push(obtenerCuadro());
     let delay = 0;
@@ -22,7 +23,6 @@ function turnoComputadora(){
             },500);
 
         },800 + delay);
-        $cuadro.style.opacity = 0.5;
         delay += 800;
     });
     turnoJugador();
@@ -30,13 +30,13 @@ function turnoComputadora(){
 
 function obtenerCuadro(){
     console.log("obtener cuadro");
-    const $cuadrosLista = document.querySelectorAll(".cuadro");
-    const indiceLista = Number(Math.floor(Math.random() * $cuadrosLista.length));
-    return $cuadrosLista[indiceLista];    
+    const $cuadros = document.querySelectorAll(".cuadro");
+    const cuadro = $cuadros[Math.floor(Math.random() * $cuadros.length)];
+    return cuadro;    
 }
 
 function turnoJugador(){
-    console.log("obtener cuadro jugador");
+    console.log("Turno jugador");
     document.querySelectorAll(".cuadro").forEach(function($cuadro){
         $cuadro.onclick = entradaJugador;
     });
@@ -48,11 +48,12 @@ function entradaJugador(e){
     const $cuadro = e.target;
     setTimeout(function(){
         $cuadro.style.opacity = 1;
+        
         setTimeout(function(){
             $cuadro.style.opacity = 0.5;
         },500);
+
     },80 + delay);
-    $cuadro.style.opacity = 0.5;
         delay += 80;
 
     guardarMovimientosJugador.push($cuadro);
@@ -68,10 +69,11 @@ function compararJugada(){
         guardarMovimientosJugador.forEach(function($cuadroJugador){
             if($cuadroMaquina === $cuadroJugador){
                 setTimeout(function(){
-                    reiniciarMovimientosJugador();
+                    
                     turnoComputadora();
+                    
                 },1000);
-                
+                reiniciarMovimientosJugador();
             }
             if($cuadroMaquina !== $cuadroJugador){
                 
@@ -79,8 +81,13 @@ function compararJugada(){
             }
         });
     });
+    
 }
 
 function reiniciarMovimientosJugador(){
+    guardarMovimientosJugador = [];
+}
+function reiniciarMovimientos(){
+    guardarMovimientosMaquina = [];
     guardarMovimientosJugador = [];
 }
