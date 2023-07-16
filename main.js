@@ -1,16 +1,20 @@
 let guardarMovimientosMaquina = [];
 let guardarMovimientosJugador = [];
+let ronda = 0;
+let estado = '';
 
 document.querySelector("#boton-empezar").onclick = empezar;
 
 function empezar(){
     reiniciarMovimientos();
+    ronda = 1;
+    actualizaRonda();
+    actualizaEstado(`Turno computadora`);
     turnoComputadora();
 }
 
 function turnoComputadora(){
     
-    console.log("turno de la computadora");
     guardarMovimientosMaquina.push(obtenerCuadro());
     let delay = 0;
     guardarMovimientosMaquina.forEach(function($cuadro){
@@ -29,14 +33,15 @@ function turnoComputadora(){
 }
 
 function obtenerCuadro(){
-    console.log("obtener cuadro");
     const $cuadros = document.querySelectorAll(".cuadro");
     const cuadro = $cuadros[Math.floor(Math.random() * $cuadros.length)];
     return cuadro;    
 }
 
 function turnoJugador(){
-    console.log("Turno jugador");
+    setTimeout(function(){
+        actualizaEstado(`Turno Jugador`);
+    },3000);
     document.querySelectorAll(".cuadro").forEach(function($cuadro){
         $cuadro.onclick = entradaJugador;
     });
@@ -44,7 +49,6 @@ function turnoJugador(){
 
 function entradaJugador(e){
     let delay = 0;
-    console.log("obtener cuadro jugador");
     const $cuadro = e.target;
     setTimeout(function(){
         $cuadro.style.opacity = 1;
@@ -57,6 +61,14 @@ function entradaJugador(e){
         delay += 80;
 
     guardarMovimientosJugador.push($cuadro);
+    if(guardarMovimientosMaquina[0] !== guardarMovimientosJugador[0]){
+        
+        actualizaEstado(`Perdiste! toca "Empezar" para volver a Jugar!`);
+        ronda = 0;
+        actualizaRonda();
+        bloquearUsuario();
+        return '';
+    }
     if(guardarMovimientosJugador.length === guardarMovimientosMaquina.length){
         compararJugada();
     }
@@ -64,24 +76,30 @@ function entradaJugador(e){
 }
 
 function compararJugada(){
-
-    guardarMovimientosMaquina.forEach(function($cuadroMaquina){
-        guardarMovimientosJugador.forEach(function($cuadroJugador){
-            if($cuadroMaquina === $cuadroJugador){
-                setTimeout(function(){
-                    
-                    turnoComputadora();
-                    
-                },1000);
-                reiniciarMovimientosJugador();
-            }
-            if($cuadroMaquina !== $cuadroJugador){
-                
-                console.log("Perdiste!!!");
-            }
-        });
-    });
-    
+    for(let i = 0; i < guardarMovimientosMaquina.length; i++){
+        if(guardarMovimientosMaquina[i] === guardarMovimientosJugador[i]){
+            setTimeout(function(){
+                actualizaEstado(`Turno computadora`);
+            },1000);
+            //actualizaEstado(`Turno computadora`);
+        }
+        if(guardarMovimientosMaquina[i] !== guardarMovimientosJugador[i]){
+            actualizaEstado(`Perdiste! toca "Empezar" para volver a Jugar!`);
+            ronda = 0;
+            actualizaRonda();
+            bloquearUsuario();
+            return '';
+        }
+        
+    }
+    setTimeout(function(){
+        
+        ronda++;
+        actualizaRonda();
+        turnoComputadora();
+        
+    },1000);
+    reiniciarMovimientosJugador();
 }
 
 function reiniciarMovimientosJugador(){
@@ -90,4 +108,18 @@ function reiniciarMovimientosJugador(){
 function reiniciarMovimientos(){
     guardarMovimientosMaquina = [];
     guardarMovimientosJugador = [];
+}
+function bloquearUsuario(){
+    document.querySelectorAll('.cuadro').forEach(function($cuadro) {
+        $cuadro.onclick = function() {
+        };
+    });
+}
+function actualizaRonda(){
+    const $ronda = document.querySelector("#ronda");
+    $ronda.textContent = ronda;
+}
+function actualizaEstado(estado){
+    const $estado = document.querySelector("#estado");
+    $estado.textContent = estado;
 }
