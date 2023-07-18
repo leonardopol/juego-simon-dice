@@ -2,6 +2,7 @@ let guardarMovimientosMaquina = [];
 let guardarMovimientosJugador = [];
 let ronda = 0;
 let estado = '';
+let indice = 0;
 
 document.querySelector("#boton-empezar").onclick = empezar;
 
@@ -50,6 +51,7 @@ function turnoJugador(){
 function entradaJugador(e){
     let delay = 0;
     const $cuadro = e.target;
+    indice++;
     setTimeout(function(){
         $cuadro.style.opacity = 1;
         
@@ -59,16 +61,17 @@ function entradaJugador(e){
 
     },80 + delay);
         delay += 80;
-
-    guardarMovimientosJugador.push($cuadro);
-    if(guardarMovimientosMaquina[0] !== guardarMovimientosJugador[0]){
-        
-        actualizaEstado(`Perdiste! toca "Empezar" para volver a Jugar!`);
+    
+    if($cuadro !== guardarMovimientosMaquina[indice - 1]){
+        actualizaEstado(`Perdisteee! toca "Empezar" para volver a Jugar!`);
         ronda = 0;
         actualizaRonda();
         bloquearUsuario();
         return '';
     }
+
+    guardarMovimientosJugador.push($cuadro);
+
     if(guardarMovimientosJugador.length === guardarMovimientosMaquina.length){
         compararJugada();
     }
@@ -81,7 +84,7 @@ function compararJugada(){
             setTimeout(function(){
                 actualizaEstado(`Turno computadora`);
             },1000);
-            //actualizaEstado(`Turno computadora`);
+
         }
         if(guardarMovimientosMaquina[i] !== guardarMovimientosJugador[i]){
             actualizaEstado(`Perdiste! toca "Empezar" para volver a Jugar!`);
@@ -90,7 +93,7 @@ function compararJugada(){
             bloquearUsuario();
             return '';
         }
-        
+
     }
     setTimeout(function(){
         
@@ -100,6 +103,7 @@ function compararJugada(){
         
     },1000);
     reiniciarMovimientosJugador();
+    indice = 0;
 }
 
 function reiniciarMovimientosJugador(){
