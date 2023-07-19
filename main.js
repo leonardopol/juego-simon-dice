@@ -68,6 +68,7 @@ function entradaJugador(e){
     
     if($cuadro !== guardarMovimientosMaquina[indice - 1]){
         actualizaEstado(`Perdisteee! toca "Empezar" para volver a Jugar!`);
+        estadoFinDeJuego();
         ronda = 0;
         actualizaRonda();
         bloquearUsuario();
@@ -123,4 +124,8 @@ function actualizaRonda(){
 function actualizaEstado(estado){
     const $estado = document.querySelector("#estado");
     $estado.textContent = estado;
+}
+function estadoFinDeJuego(){
+    const $alerta = document.querySelector("#estado");
+    $alerta.style.color = "red";
 }
