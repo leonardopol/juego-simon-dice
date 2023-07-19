@@ -9,6 +9,7 @@ document.querySelector("#boton-empezar").onclick = empezar;
 function empezar(){
     reiniciarMovimientos();
     ronda = 1;
+    indice = 0;
     actualizaRonda();
     actualizaEstado(`Turno computadora`);
     turnoComputadora();
@@ -40,16 +41,19 @@ function obtenerCuadro(){
 }
 
 function turnoJugador(){
+    let delay = 0;
     setTimeout(function(){
         actualizaEstado(`Turno Jugador`);
-    },3000);
+    },1000 + delay);
     document.querySelectorAll(".cuadro").forEach(function($cuadro){
         $cuadro.onclick = entradaJugador;
     });
 }
 
 function entradaJugador(e){
+
     let delay = 0;
+
     const $cuadro = e.target;
     indice++;
     setTimeout(function(){
@@ -60,14 +64,14 @@ function entradaJugador(e){
         },500);
 
     },80 + delay);
-        delay += 80;
+    delay += 80;
     
     if($cuadro !== guardarMovimientosMaquina[indice - 1]){
         actualizaEstado(`Perdisteee! toca "Empezar" para volver a Jugar!`);
         ronda = 0;
         actualizaRonda();
         bloquearUsuario();
-        return '';
+        return;
     }
 
     guardarMovimientosJugador.push($cuadro);
@@ -85,13 +89,6 @@ function compararJugada(){
                 actualizaEstado(`Turno computadora`);
             },1000);
 
-        }
-        if(guardarMovimientosMaquina[i] !== guardarMovimientosJugador[i]){
-            actualizaEstado(`Perdiste! toca "Empezar" para volver a Jugar!`);
-            ronda = 0;
-            actualizaRonda();
-            bloquearUsuario();
-            return '';
         }
 
     }
