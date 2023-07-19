@@ -26,4 +26,11 @@
     transition: opacity 500ms;
     background-color: green;
 }
-
+#estado {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    color: green;
+}
+#ronda {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    color: brown;
+}
