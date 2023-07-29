@@ -1,8 +1,8 @@
 let guardarMovimientosMaquina = [];
 let guardarMovimientosJugador = [];
 let ronda = 0;
-let estado = '';
 let indice = 0;
+let estado = '';
 
 document.querySelector("#boton-empezar").onclick = empezar;
 
