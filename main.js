@@ -17,21 +17,21 @@ function empezar(){
 
 function turnoComputadora(){
     
+    bloquearUsuario();
     guardarMovimientosMaquina.push(obtenerCuadro());
-    let delay = 0;
-    guardarMovimientosMaquina.forEach(function($cuadro){
-        
+    const RETRASO_TURNO_JUGADOR = (guardarMovimientosMaquina.length + 1) * 1000;
+
+    guardarMovimientosMaquina.forEach(function($cuadro, index){
+        const RETRASO_MS = (index + 1) * 1000;
         setTimeout(function() {
-        $cuadro.style.opacity = 1;
-
-            setTimeout(function(){
-                $cuadro.style.opacity = 0.5;
-            },500);
-
-        },800 + delay);
-        delay += 800;
+            resaltar($cuadro);
+        },RETRASO_MS);
     });
-    turnoJugador();
+
+    setTimeout(function() {
+        actualizaEstado('Turno del jugador');
+        desbloquearUsuario();
+      }, RETRASO_TURNO_JUGADOR);
 }
 
 function obtenerCuadro(){
@@ -41,10 +41,6 @@ function obtenerCuadro(){
 }
 
 function turnoJugador(){
-    let delay = 0;
-    setTimeout(function(){
-        actualizaEstado(`Turno Jugador`);
-    },1000 + delay);
     document.querySelectorAll(".cuadro").forEach(function($cuadro){
         $cuadro.onclick = entradaJugador;
     });
@@ -52,19 +48,9 @@ function turnoJugador(){
 
 function entradaJugador(e){
 
-    let delay = 0;
-
     const $cuadro = e.target;
     indice++;
-    setTimeout(function(){
-        $cuadro.style.opacity = 1;
-        
-        setTimeout(function(){
-            $cuadro.style.opacity = 0.5;
-        },500);
-
-    },80 + delay);
-    delay += 80;
+    resaltar($cuadro);
     
     if($cuadro !== guardarMovimientosMaquina[indice - 1]){
         actualizaEstado(`Perdisteee! toca "Empezar" para volver a Jugar!`);
@@ -84,17 +70,19 @@ function entradaJugador(e){
 }
 
 function compararJugada(){
+    
     for(let i = 0; i < guardarMovimientosMaquina.length; i++){
         if(guardarMovimientosMaquina[i] === guardarMovimientosJugador[i]){
             setTimeout(function(){
                 actualizaEstado(`Turno computadora`);
+                
             },1000);
 
         }
 
     }
     setTimeout(function(){
-        
+
         ronda++;
         actualizaRonda();
         turnoComputadora();
@@ -107,25 +95,43 @@ function compararJugada(){
 function reiniciarMovimientosJugador(){
     guardarMovimientosJugador = [];
 }
+
 function reiniciarMovimientos(){
     guardarMovimientosMaquina = [];
     guardarMovimientosJugador = [];
 }
+
 function bloquearUsuario(){
     document.querySelectorAll('.cuadro').forEach(function($cuadro) {
         $cuadro.onclick = function() {
         };
     });
 }
+
+function desbloquearUsuario() {
+    document.querySelectorAll('.cuadro').forEach(function($cuadro) {
+      $cuadro.onclick = entradaJugador;
+    });
+}
+
 function actualizaRonda(){
     const $ronda = document.querySelector("#ronda");
     $ronda.textContent = ronda;
 }
+
 function actualizaEstado(estado){
     const $estado = document.querySelector("#estado");
     $estado.textContent = estado;
 }
+
 function estadoFinDeJuego(){
     const $alerta = document.querySelector("#estado");
     $alerta.style.color = "red";
+}
+
+function resaltar($cuadro) {
+    $cuadro.style.opacity = 1;
+    setTimeout(function() {
+      $cuadro.style.opacity = 0.5;
+    }, 500);
 }
