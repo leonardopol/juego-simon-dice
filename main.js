@@ -1,8 +1,8 @@
-let guardarMovimientosMaquina = [];
-let guardarMovimientosJugador = [];
+let movimientosMaquina = [];
+let movimientosJugador = [];
 let ronda = 0;
-let estado = '';
 let indice = 0;
+let estado = '';
 
 document.querySelector("#boton-empezar").onclick = empezar;
 
@@ -10,41 +10,38 @@ function empezar(){
     reiniciarMovimientos();
     ronda = 1;
     indice = 0;
-    actualizaRonda();
-    actualizaEstado(`Turno computadora`);
+    actualizarRonda();
+    actualizarEstado(`Turno computadora`);
+    actualizarColorAlertaInicioDeJuego();
     turnoComputadora();
 }
 
 function turnoComputadora(){
     
-    guardarMovimientosMaquina.push(obtenerCuadro());
-    let delay = 0;
-    guardarMovimientosMaquina.forEach(function($cuadro){
-        
+    bloquearUsuario();
+    movimientosMaquina.push(obtenerCuadroAleatoreo());
+    const RETRASO_TURNO_JUGADOR = (movimientosMaquina.length + 1) * 1000;
+
+    movimientosMaquina.forEach(function($cuadro, index){
+        const RETRASO_MS = (index + 1) * 1000;
         setTimeout(function() {
-        $cuadro.style.opacity = 1;
-
-            setTimeout(function(){
-                $cuadro.style.opacity = 0.5;
-            },500);
-
-        },800 + delay);
-        delay += 800;
+            resaltarCuadro($cuadro);
+        },RETRASO_MS);
     });
-    turnoJugador();
+
+    setTimeout(function() {
+        actualizarEstado('Turno del jugador');
+        desbloquearUsuario();
+      }, RETRASO_TURNO_JUGADOR);
 }
 
-function obtenerCuadro(){
+function obtenerCuadroAleatoreo(){
     const $cuadros = document.querySelectorAll(".cuadro");
     const cuadro = $cuadros[Math.floor(Math.random() * $cuadros.length)];
     return cuadro;    
 }
 
 function turnoJugador(){
-    let delay = 0;
-    setTimeout(function(){
-        actualizaEstado(`Turno Jugador`);
-    },1000 + delay);
     document.querySelectorAll(".cuadro").forEach(function($cuadro){
         $cuadro.onclick = entradaJugador;
     });
@@ -52,51 +49,43 @@ function turnoJugador(){
 
 function entradaJugador(e){
 
-    let delay = 0;
-
     const $cuadro = e.target;
     indice++;
-    setTimeout(function(){
-        $cuadro.style.opacity = 1;
-        
-        setTimeout(function(){
-            $cuadro.style.opacity = 0.5;
-        },500);
-
-    },80 + delay);
-    delay += 80;
+    resaltarCuadro($cuadro);
     
-    if($cuadro !== guardarMovimientosMaquina[indice - 1]){
-        actualizaEstado(`Perdisteee! toca "Empezar" para volver a Jugar!`);
-        estadoFinDeJuego();
+    if($cuadro !== movimientosMaquina[indice - 1]){
+        actualizarEstado(`Perdisteee! toca "Empezar" para volver a Jugar!`);
+        actualizarColorAlertaFinDeJuego();
         ronda = 0;
-        actualizaRonda();
+        actualizarRonda();
         bloquearUsuario();
         return;
     }
 
-    guardarMovimientosJugador.push($cuadro);
+    movimientosJugador.push($cuadro);
 
-    if(guardarMovimientosJugador.length === guardarMovimientosMaquina.length){
+    if(movimientosJugador.length === movimientosMaquina.length){
         compararJugada();
     }
     
 }
 
 function compararJugada(){
-    for(let i = 0; i < guardarMovimientosMaquina.length; i++){
-        if(guardarMovimientosMaquina[i] === guardarMovimientosJugador[i]){
+    
+    for(let i = 0; i < movimientosMaquina.length; i++){
+        if(movimientosMaquina[i] === movimientosJugador[i]){
             setTimeout(function(){
-                actualizaEstado(`Turno computadora`);
+                actualizarEstado(`Turno computadora`);
+                
             },1000);
 
         }
 
     }
     setTimeout(function(){
-        
+
         ronda++;
-        actualizaRonda();
+        actualizarRonda();
         turnoComputadora();
         
     },1000);
@@ -105,27 +94,50 @@ function compararJugada(){
 }
 
 function reiniciarMovimientosJugador(){
-    guardarMovimientosJugador = [];
+    movimientosJugador = [];
 }
+
 function reiniciarMovimientos(){
-    guardarMovimientosMaquina = [];
-    guardarMovimientosJugador = [];
+    movimientosMaquina = [];
+    movimientosJugador = [];
 }
+
 function bloquearUsuario(){
     document.querySelectorAll('.cuadro').forEach(function($cuadro) {
         $cuadro.onclick = function() {
         };
     });
 }
-function actualizaRonda(){
+
+function desbloquearUsuario() {
+    document.querySelectorAll('.cuadro').forEach(function($cuadro) {
+      $cuadro.onclick = entradaJugador;
+    });
+}
+
+function actualizarRonda(){
     const $ronda = document.querySelector("#ronda");
     $ronda.textContent = ronda;
 }
-function actualizaEstado(estado){
+
+function actualizarEstado(estado){
     const $estado = document.querySelector("#estado");
     $estado.textContent = estado;
 }
-function estadoFinDeJuego(){
+
+function actualizarColorAlertaFinDeJuego(){
     const $alerta = document.querySelector("#estado");
     $alerta.style.color = "red";
+}
+
+function actualizarColorAlertaInicioDeJuego(){
+    const $alerta = document.querySelector("#estado");
+    $alerta.style.color = "green";
+}
+
+function resaltarCuadro($cuadro) {
+    $cuadro.style.opacity = 1;
+    setTimeout(function() {
+      $cuadro.style.opacity = 0.5;
+    }, 500);
 }
